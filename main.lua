@@ -19,6 +19,12 @@ armFg = armMass*gravity
 headWidth = 200
 headHeight = 200
 headMass = 50
+tieMass = 0
+tieAlpha = 0
+tieOmega = 0
+tieWidth = 10
+tieLength = 50
+tieTheta = math.rad(0)
 
 function getTorque(dist,force,theta)
     angle = math.sin(-theta)
@@ -76,6 +82,7 @@ function drawRightArm(mode,x,y,w,h,theta)
 end
 function love.load()
     cat = love.graphics.newImage(catObj.img)
+    tie = love.graphics.newImage("necktie.png")
     love.graphics.setBackgroundColor(0.7,0.3,0.1)
     font = love.graphics.newFont(30)
     smallFont = love.graphics.newFont(10)
@@ -102,11 +109,14 @@ function love.update(dt)
     omega4 = omega4 + alpha4 * dt
     headAlpha = getAlpha(headWidth/2, catObj.theta, headMass, headWidth)
     headOmega = headOmega + headAlpha * dt
+    tieAlpha = getAlpha(tieLength/2, tieTheta, tieMass, tieLength)
+    tieOmega = tieOmega + tieAlpha * dt
     arm1.theta = arm1.theta + omega1* dt
     arm2.theta = arm2.theta + omega2* dt
     leg1.theta = leg1.theta + omega3* dt
     leg2.theta = leg2.theta + omega4* dt
     catObj.theta = catObj.theta + headOmega* dt
+    tieTheta = tieTheta + tieOmega* dt
     sin = math.sin(-arm1.theta)
 end
 function love.draw()
@@ -121,5 +131,6 @@ function love.draw()
     drawRotatedRectangle(leg1.mode,leg1.x,leg1.y,leg1.width,leg1.height,leg1.theta)
     drawRotatedRectangle(arm2.mode,leg2.x,leg2.y,leg2.width,leg2.height,leg2.theta)
     drawRotatedImage(cat, catObj.x, catObj.y, catObj.theta, headWidth)
+    drawRotatedImage(tie, torso.x+torso.width/2, torso.y+20, tieTheta, 10)
     --love.graphics.draw(cat, catObj.x, catObj.y, 0, 0.2, 0.2)
 end
