@@ -9,6 +9,10 @@ alpha1 = 0
 alpha2 = 0
 omega1 = 0
 omega2 = 0
+alpha3 = 0
+alpha4 = 0
+omega3 = 0
+omega4 = 0
 armFg = armMass*gravity
 headWidth = 200
 headHeight = 200
@@ -35,8 +39,8 @@ end
 torso = {mode = "fill", x=300, y=300, width=80, height=80, theta=math.rad(0)}
 arm1 = {mode="fill", x=torso.x-armWidth, y=torso.y, width=armWidth, height=armLength, theta=math.rad(-20)}
 arm2 = {mode="fill", x=torso.x+torso.width, y=torso.y, width=armWidth, height=armLength, theta=math.rad(20)}
-leg1 = {mode="fill", x=torso.x, y=torso.y+torso.height, width=legWidth, height=legLength, theta= math.rad(0)}
-leg2 = {mode="fill", x=torso.x+torso.width-legWidth, y=torso.y+torso.height, width=legWidth, height=legLength, theta=math.rad(0)}
+leg1 = {mode="fill", x=torso.x, y=torso.y+torso.height, width=legWidth, height=legLength, theta= math.rad(-20)}
+leg2 = {mode="fill", x=torso.x+torso.width-legWidth, y=torso.y+torso.height, width=legWidth, height=legLength, theta=math.rad(20)}
 catObj = {img = "scaredcat.png", x=(torso.x+(torso.width/2)-70),y=torso.y-80, width=headWidth, height=headHeight}
 function drawRotatedRectangle(mode,x,y,w,h,theta)
     love.graphics.push()
@@ -49,12 +53,12 @@ function drawLeftArm(mode,x,y,w,h,theta)
     love.graphics.push()
     love.graphics.translate(x+w,y)
     love.graphics.rotate(theta)
-    love.graphics.rectangle(mode, 0, 0, w, h)
+    love.graphics.rectangle(mode, -w, 0, w, h)
     love.graphics.pop()
 end
 function drawRightArm(mode,x,y,w,h,theta)
     love.graphics.push()
-    love.graphics.translate(x-w,y)
+    love.graphics.translate(x,y)
     love.graphics.rotate(theta)
     love.graphics.rectangle(mode, 0, 0, w, h)
     love.graphics.pop()
@@ -75,8 +79,14 @@ function love.update(dt)
     omega1 = omega1 + alpha1 * dt
     alpha2 = getAlpha(armLength/2, arm2.theta, armMass, armLength)
     omega2 = omega2 + alpha2 * dt
+    alpha3 = getAlpha(legLength/2, leg1.theta, legMass, legLength)
+    omega3 = omega3 + alpha3 * dt
+    alpha4 = getAlpha(legLength/2, leg2.theta, legMass, legLength)
+    omega4 = omega4 + alpha4 * dt
     arm1.theta = arm1.theta + omega1* dt
     arm2.theta = arm2.theta + omega2* dt
+    leg1.theta = leg1.theta + omega3* dt
+    leg2.theta = leg2.theta + omega4* dt
     sin = math.sin(-arm1.theta)
 end
 function love.draw()
@@ -86,8 +96,8 @@ function love.draw()
     love.graphics.setFont(font)
     love.graphics.print("GRAVITY CAT", 100,100)
     drawRotatedRectangle(torso.mode,torso.x,torso.y,torso.width,torso.height,torso.theta)
-    drawRotatedRectangle(arm1.mode,arm1.x,arm1.y,arm1.width,arm1.height,arm1.theta)
-    drawRotatedRectangle(arm2.mode,arm2.x,arm2.y,arm2.width,arm2.height,arm2.theta)
+    drawLeftArm(arm1.mode,arm1.x,arm1.y,arm1.width,arm1.height,arm1.theta)
+    drawRightArm(arm2.mode,arm2.x,arm2.y,arm2.width,arm2.height,arm2.theta)
     drawRotatedRectangle(leg1.mode,leg1.x,leg1.y,leg1.width,leg1.height,leg1.theta)
     drawRotatedRectangle(arm2.mode,leg2.x,leg2.y,leg2.width,leg2.height,leg2.theta)
     love.graphics.draw(cat, catObj.x, catObj.y, 0, 0.2, 0.2)
